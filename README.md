@@ -20,15 +20,19 @@ Many young individuals today face challenges in navigating the rapidly evolving 
   
 ### Installation
 1. Clone the repository:
+   
    ```bash
    git clone https://github.com/Sadiya-025/SkillBridge-EYTechathon.git
    cd SkillBridge-EYTechathon
 
-2. Install required Python packages: 
+2. Install required Python packages:
+    
    ```bash
    pip install Flask Flask-SQLAlchemy cohere
 
 3. Run the application:
+   
    ```bash
    python app.py
-You can access the platform at http://127.0.0.1:5000
+   
+  You can access the platform at http://127.0.0.1:5000
