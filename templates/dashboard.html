@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SkillBridge Skills Tracker</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f7fa;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #3a79e1;
+            font-weight: bold;
+        }
+
+        h3 {
+            color: #3a79e1;
+            font-weight: bold;
+        }
+
+        p {
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        label {
+            font-weight: 600;
+            color: #3a79e1;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        select:focus, input[type="number"]:focus {
+            border-color: #3a79e1;
+            outline: none;
+        }
+
+        button[type="submit"], .forecast-btn {
+            background: linear-gradient(45deg, #3a79e1, #5a9bf9);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover, .forecast-btn:hover {
+            background: linear-gradient(45deg, #4a8df8, #3a79e1);
+        }
+
+        .result-box {
+            margin-top: 20px;
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .signout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #3a79e1, #5a9bf9);
+            color: white;
+            padding: 10px 20px;
+            font-size: 1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .signout-btn:hover {
+            background: linear-gradient(45deg, #4a8df8, #3a79e1);
+            text-decoration: none;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/signout" class="signout-btn">Sign Out</a>
+    <div class="container mt-5">
+        <h2>User Dashboard</h2>
+        <p>Welcome, {{username}}</p>
+        <h3>Educational Qualification Prediction</h3>
+        <form action="/predict" method="post">
+            <label for="gender">Gender:</label>
+            <select name="gender" id="gender">
+                <option value="0">Male</option>
+                <option value="1">Female</option>
+            </select>
+
+            <label for="parental_level_of_education">Parental Level of Education:</label>
+            <select name="parental_level_of_education" id="parental_level_of_education">
+                <option value="bachelor's degree">Bachelor's Degree</option>
+                <option value="master's degree">Master's Degree</option>
+                <option value="associate's degree">Associate's Degree</option>
+                <option value="some college">Some College</option>
+                <option value="high school">High School</option>
+                <option value="some high school">Some High School</option>
+            </select>
+
+            <label for="lunch">Lunch Type:</label>
+            <select name="lunch" id="lunch">
+                <option value="0">Standard</option>
+                <option value="1">Free/Reduced</option>
+            </select>
+
+            <label for="test_preparation_course">Test Preparation Course:</label>
+            <select name="test_preparation_course" id="test_preparation_course">
+                <option value="0">None</option>
+                <option value="1">Completed</option>
+            </select>
+
+            <label for="math_score">Math Score:</label>
+            <input type="number" id="math_score" name="math_score" min="0" max="100" step="1" required>
+
+            <label for="reading_score">Reading Score:</label>
+            <input type="number" id="reading_score" name="reading_score" min="0" max="100" step="1" required>
+
+            <label for="writing_score">Writing Score:</label>
+            <input type="number" id="writing_score" name="writing_score" min="0" max="100" step="1" required>
+
+            <button type="submit" class="btn btn-primary">Predict</button>
+        </form>
+        {% if prediction %}
+        <div class="result-box">
+            <h2>Predicted Skill Set: {{ prediction }}</h2>
+        </div>
+        {% endif %}
+
+        {% if educational_report %}
+        <div class="result-box">
+            <p>{{ educational_report | safe }}</p>
+        </div><br>
+        {% endif %}
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
