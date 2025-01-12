@@ -35,4 +35,3 @@ Many young individuals today face challenges in navigating the rapidly evolving 
    ```bash
    python app.py
    
-  You can access the platform at http://127.0.0.1:5000
