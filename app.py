@@ -1,9 +1,8 @@
-import random
 import pandas as pd
 import os, cohere, markdown, joblib
 from flask_sqlalchemy import SQLAlchemy
 from sklearn.preprocessing import LabelEncoder
-from flask import Flask, jsonify, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.sqlite3'
@@ -88,7 +87,7 @@ def predict():
     
     data = {
         'gender': [int(request.form['gender'])],  # 0 or 1
-        'parental_level_of_education': [int(request.form['parental_level_of_education'])],  # Categorical
+        'parental_level_of_education': [request.form['parental_level_of_education']],  # Categorical
         'lunch': [int(request.form['lunch'])],  # 0 or 1
         'test_preparation_course': [int(request.form['test_preparation_course'])],  # 0 or 1
         'math_score': [int(request.form['math_score'])],  # Numerical
@@ -97,12 +96,10 @@ def predict():
     }
     
     new_data = pd.DataFrame(data)
+    new_data['parental_level_of_education'] = encoder.fit_transform(new_data['parental_level_of_education'])
 
-    data['parental_level_of_education'] = encoder.fit_transform(data['parental_level_of_education'])
-    print(data)
     new_data_scaled = scaler.transform(new_data)
 
-    # Predict the average score
     average_score_pred = model.predict(new_data_scaled)
 
     if average_score_pred<=40:
@@ -114,21 +111,36 @@ def predict():
     
     # Generates a personalized health report using Generative AI (Cohere)
     prompt = f"""
-    Generate a personalized educational and skill set report based on the following user data:
-    Gender: {request.form['Gender']}
+    Gender: {request.form['gender']}
     Parental Level of Education: {request.form['parental_level_of_education']}
     Has Lunch: {request.form['lunch']} Yes/No
-    Test Preparation Course: {request.form['test_preparation_course']} Taken/Has Not Taken the Test Preparation Course
-    Math Score: {request.form['math_score']}
-    Reading Score: {request.form['reading_score']} 
-    Writing Score: {request.form['writing_score']}
+    Test Preparation Course: {request.form['test_preparation_course']} (Taken/Has Not Taken)
+    Math Score: {request.form['math_score']} (out of 100)
+    Reading Score: {request.form['reading_score']} (out of 100)
+    Writing Score: {request.form['writing_score']} (out of 100)
 
-    Provide a detailed skill set report with the following:
-    1. Evaluation of current educational qualification based on the user's data.
-    2. Personalized educational suggestions and skillset improvement recommendations based on the math, reading, writing scores out of 100.
-    3. Long-term skills improvement tips based on the data (including managing current job situation, increasing skills set, educational improvements, etc).
+    Generate a personalized educational and skill set report based on the input data with the following sections:
     
-    Restructure it with Bullet Points
+    1. Current Educational Evaluation:
+    Analyze the user's overall performance based on their math, reading, and writing scores.
+    Provide insights into their strengths and weaknesses in these areas.
+    Correlate their performance with the parental level of education to identify potential external influences.
+    
+    2. Personalized Educational Suggestions:
+    Recommend specific academic improvement strategies for each subject (math, reading, writing).
+    Highlight areas where additional support or resources (e.g., tutors, online courses, books) may be beneficial.
+    Suggest actionable tips for improving overall academic performance.
+    
+    3. Long-Term Skills Improvement Plan:
+    Provide recommendations for building foundational and advanced skills based on their performance.
+    Recommend long-term educational and professional goals aligned with their current skill set.
+    
+    4. Additional Recommendations:
+    Advise on time management, stress management, and adopting consistent study habits.
+    Suggest leveraging available resources (e.g., test preparation courses, extracurricular activities) for comprehensive growth.
+    If the "lunch" factor indicates a need, provide dietary or lifestyle suggestions to enhance focus and productivity.
+    
+    Restructure it with Bullet Points and Separate Each Point with a New Line
     """
 
     response = co.generate(
